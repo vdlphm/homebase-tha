@@ -1,32 +1,63 @@
-const users = new Map();
+const { Model, DataTypes, where } = require("sequelize");
+const sequelize = require("../configs/database");
 
-function addNewUser(user) {
-  if (users.has(user.email)) {
-    throw `${user.email} already exists`;
-  }
-  users.set(user.email, user);
+class User extends Model {}
+
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
+    firstname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  { sequelize, modelName: "user", timestamps: false }
+);
+
+async function findUserByEmail(email) {
+  return await User.findOne({ where: { email: email } });
 }
 
-function getUser(email) {
-  return users.get(email);
+async function addNewUser(user) {
+  return await User.create(user);
 }
 
-function deleteUser(email) {
-  if (!users.delete(email)) {
-    throw `${email} does not exist`;
-  }
+async function getUser(email) {
+  return await findUserByEmail(email);
 }
 
-function updateUser(email, user) {
-  if (!users.has(email)) {
-    throw `${email} does not exist`;
+async function deleteUser(email) {
+  return await User.destroy({ where: { email: email } });
+}
+
+async function updateUser(email, updateInfo) {
+  const user = await findUserByEmail(email);
+  if (!user) {
+    throw new Error(`${email} not found`);
   }
-  if (email === user.email) {
-    users.set(email, user);
-  } else {
-    users.delete(email);
-    users.set(user.email, user);
+  if (updateInfo.hasOwnProperty("email")) {
+    user.email = updateInfo.email;
   }
+  if (updateInfo.hasOwnProperty("firstname")) {
+    user.firstname = updateInfo.firstname;
+  }
+  if (updateInfo.hasOwnProperty("lastname")) {
+    user.lastname = updateInfo.lastname;
+  }
+  await user.save();
 }
 
 module.exports = { addNewUser, getUser, deleteUser, updateUser };

@@ -1,78 +1,66 @@
 const express = require("express");
 const router = express.Router();
 const userDb = require("../models/users");
+const { SequelizeScopeError, ValidationErrorItem } = require("sequelize");
 
-router.post("/", (req, res) => {
-  if (
-    !req.body.hasOwnProperty("email") ||
-    !req.body.hasOwnProperty("firstname") ||
-    !req.body.hasOwnProperty("lastname")
-  ) {
-    res.status(400);
-    res.send("Body is missing email/firstname/lastname");
-    return;
-  }
+router.post("/", async (req, res) => {
   try {
-    userDb.addNewUser(req.body);
+    await userDb.addNewUser(req.body);
     res.sendStatus(201);
   } catch (err) {
-    res.status(400);
-    res.send(err);
+    if (err.errors) {
+      res.status(400);
+      res.send(err.errors.map((x) => x.message));
+    } else {
+      res.sendStatus(500);
+      res.send(err.message);
+    }
   }
 });
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   if (!req.query.email) {
     res.status(400);
-    res.send("Email is required!");
+    res.send({ error: "Email is required!" });
     return;
   }
-  const user = userDb.getUser(req.query.email);
+  const user = await userDb.getUser(req.query.email);
   if (!user) {
     res.status(404);
-    res.send(`${req.query.email} not found`);
+    res.send({ error: `${req.query.email} not found` });
   } else {
     res.status(200);
     res.send(user);
   }
 });
 
-router.delete("/", (req, res) => {
+router.delete("/", async (req, res) => {
   if (!req.query.email) {
     res.status(400);
-    res.send("Email is required!");
+    res.send({ error: "Email is required!" });
     return;
   }
-  try {
-    userDb.deleteUser(req.query.email);
-    res.send(200);
-  } catch (err) {
-    res.status(404);
-    res.send(err);
-  }
+  await userDb.deleteUser(req.query.email);
+  res.sendStatus(200);
 });
 
-router.put("/", (req, res) => {
+router.put("/", async (req, res) => {
   if (!req.query.email) {
     res.status(400);
-    res.send("Email is required!");
-    return;
-  }
-  if (
-    !req.body.hasOwnProperty("email") ||
-    !req.body.hasOwnProperty("firstname") ||
-    !req.body.hasOwnProperty("lastname")
-  ) {
-    res.status(400);
-    res.send("Body is missing email/firstname/lastname");
+    res.send({ error: "Email is required!" });
     return;
   }
   try {
-    userDb.updateUser(req.query.email, req.body);
+    await userDb.updateUser(req.query.email, req.body);
     res.sendStatus(200);
   } catch (err) {
-    res.status(404);
-    res.send(err);
+    if (err.errors) {
+      res.status(400);
+      res.send(err.errors.map((x) => x.message));
+    } else {
+      res.status(404);
+      res.send({ error: err.message });
+    }
   }
 });
 
