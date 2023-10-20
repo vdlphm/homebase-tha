@@ -134,3 +134,6 @@ dist
 
 # SQLite
 *.sqlite3
+
+# venv
+venv/
