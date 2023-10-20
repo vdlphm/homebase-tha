@@ -52,4 +52,28 @@ router.delete("/", (req, res) => {
   }
 });
 
+router.put("/", (req, res) => {
+  if (!req.query.email) {
+    res.status(400);
+    res.send("Email is required!");
+    return;
+  }
+  if (
+    !req.body.hasOwnProperty("email") ||
+    !req.body.hasOwnProperty("firstname") ||
+    !req.body.hasOwnProperty("lastname")
+  ) {
+    res.status(400);
+    res.send("Body is missing email/firstname/lastname");
+    return;
+  }
+  try {
+    userDb.updateUser(req.query.email, req.body);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(404);
+    res.send(err);
+  }
+});
+
 module.exports = router;

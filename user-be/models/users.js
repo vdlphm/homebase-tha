@@ -17,4 +17,16 @@ function deleteUser(email) {
   }
 }
 
-module.exports = { addNewUser, getUser, deleteUser };
+function updateUser(email, user) {
+  if (!users.has(email)) {
+    throw `${email} does not exist`;
+  }
+  if (email === user.email) {
+    users.set(email, user);
+  } else {
+    users.delete(email);
+    users.set(user.email, user);
+  }
+}
+
+module.exports = { addNewUser, getUser, deleteUser, updateUser };
