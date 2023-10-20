@@ -21,4 +21,20 @@ router.post("/", (req, res) => {
   }
 });
 
+router.get("/", (req, res) => {
+  if (!req.query.email) {
+    res.status(400);
+    res.send("Email is required!");
+    return;
+  }
+  const user = userDb.getUser(req.query.email);
+  if (!user) {
+    res.status(404);
+    res.send(`${req.query.email} not found`);
+  } else {
+    res.status(200);
+    res.send(user);
+  }
+});
+
 module.exports = router;

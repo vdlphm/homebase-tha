@@ -7,4 +7,8 @@ function addNewUser(user) {
   users.set(user.email, user);
 }
 
-module.exports = { addNewUser };
+function getUser(email) {
+  return users.get(email);
+}
+
+module.exports = { addNewUser, getUser };
