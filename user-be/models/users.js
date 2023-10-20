@@ -11,4 +11,10 @@ function getUser(email) {
   return users.get(email);
 }
 
-module.exports = { addNewUser, getUser };
+function deleteUser(email) {
+  if (!users.delete(email)) {
+    throw `${email} does not exist`;
+  }
+}
+
+module.exports = { addNewUser, getUser, deleteUser };

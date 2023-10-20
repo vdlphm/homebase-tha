@@ -37,4 +37,19 @@ router.get("/", (req, res) => {
   }
 });
 
+router.delete("/", (req, res) => {
+  if (!req.query.email) {
+    res.status(400);
+    res.send("Email is required!");
+    return;
+  }
+  try {
+    userDb.deleteUser(req.query.email);
+    res.send(200);
+  } catch (err) {
+    res.status(404);
+    res.send(err);
+  }
+});
+
 module.exports = router;
