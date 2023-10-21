@@ -4,6 +4,20 @@ const userDb = require("../models/users");
 const { SequelizeScopeError, ValidationErrorItem } = require("sequelize");
 
 router.post("/", async (req, res) => {
+  /*
+    #swagger.summary = 'Create user'
+    #swagger.tags = ['User']
+    #swagger.parameters['user'] = {
+        in: 'body',
+        type: 'string',
+        description: 'User information',
+        schema: {
+          $email: 'email@email.com',
+          $firstname: 'first name',
+          $lastname: 'last name'
+        }
+      } 
+  */
   try {
     await userDb.addNewUser(req.body);
     res.sendStatus(201);
@@ -19,6 +33,24 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  /*
+    #swagger.summary = 'Get user by email'
+    #swagger.tags = ['User']
+    #swagger.parameters['email'] = {
+        in: 'query',
+        type: 'string',
+        required: 'true',
+        description: 'email of user',
+      } 
+    #swagger.responses[200] = {
+          description: 'User successfully obtained.',
+          schema: { 
+            id: 1,
+            email: 'email@email.com',
+            firstname: 'firstname',
+            lastname:' 'lastname'
+          }
+  */
   if (!req.query.email) {
     res.status(400);
     res.send({ error: "Email is required!" });
@@ -35,6 +67,16 @@ router.get("/", async (req, res) => {
 });
 
 router.delete("/", async (req, res) => {
+  /*
+    #swagger.summary = 'Delete user by email'
+    #swagger.tags = ['User']
+    #swagger.parameters['email'] = {
+        in: 'query',
+        type: 'string',
+        required: 'true',
+        description: 'email of user',
+      } 
+  */
   if (!req.query.email) {
     res.status(400);
     res.send({ error: "Email is required!" });
@@ -45,6 +87,26 @@ router.delete("/", async (req, res) => {
 });
 
 router.put("/", async (req, res) => {
+  /*
+    #swagger.summary = 'Edit user'
+    #swagger.tags = ['User']
+    #swagger.parameters['user'] = {
+        in: 'body',
+        type: 'string',
+        description: 'User information',
+        schema: {
+          email: 'email@email.com',
+          firstname: 'first name',
+          lastname: 'last name'
+        }
+      }
+    #swagger.parameters['email'] = {
+        in: 'query',
+        type: 'string',
+        required: 'true',
+        description: 'email of user',
+    } 
+  */
   if (!req.query.email) {
     res.status(400);
     res.send({ error: "Email is required!" });

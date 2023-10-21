@@ -4,8 +4,8 @@
   "description": "User backend service",
   "main": "index.js",
   "scripts": {
-    "start": "PROD=true HOST=./prod.sqlite3 node index.js",
-    "dev": "HOST=./dev.sqlite3 nodemon index.js",
+    "start": "node swagger.js && PROD=true HOST=./prod.sqlite3 node index.js",
+    "dev": "node swagger.js && HOST=./dev.sqlite3 nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Vu Pham",
@@ -13,7 +13,9 @@
   "dependencies": {
     "express": "^4.18.2",
     "sequelize": "^6.33.0",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "swagger-autogen": "^2.23.6",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

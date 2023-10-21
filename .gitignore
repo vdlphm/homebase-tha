@@ -137,3 +137,6 @@ dist
 
 # venv
 venv/
+
+# Swagger file
+swagger_output.json
